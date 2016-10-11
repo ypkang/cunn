@@ -1,4 +1,14 @@
 #include "THCUNN.h"
+#include <chrono>
+#include <iostream>
+
+// hacky: change the function name so that the compiler doesn't freak out
+double thcunn_get_ts()
+{
+  auto ts = std::chrono::high_resolution_clock::now();
+  double ts_time = std::chrono::duration_cast<std::chrono::microseconds>(ts.time_since_epoch()).count();
+  return ts_time/1000.0;
+}
 
 struct MaxFloat
 {
@@ -273,12 +283,15 @@ void THNN_CudaLogSoftMax_updateOutput(THCState *state, THCudaTensor *input, THCu
   dim3 grid(batchSize);
   dim3 block(1024);
 
+  double ts = thcunn_get_ts();
   cunn_LogSoftMax_updateOutput_kernel<2>
     <<<grid, block, block.x * sizeof(float), THCState_getCurrentStream(state)>>>(
       THCudaTensor_data(state, output),
       THCudaTensor_data(state, input),
       classSize
   );
+  double logsoftmax = thcunn_get_ts() - ts;
+  std::cout<<std::fixed<<"LogSoftMax,"<<logsoftmax<<std::endl;
 
   cudaError errcode = cudaGetLastError();
   if (errcode != cudaSuccess)

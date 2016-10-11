@@ -9,3 +9,10 @@ THCState* getCutorchState(lua_State* L)
     lua_pop(L, 2);
     return state;
 }
+
+double get_ts()
+{
+  auto ts = std::chrono::high_resolution_clock::now();
+  double ts_time = std::chrono::duration_cast<std::chrono::microseconds>(ts.time_since_epoch()).count();
+  return ts_time/1000.0;
+}

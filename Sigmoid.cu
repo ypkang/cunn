@@ -11,12 +11,22 @@ struct sigmoidupdateOutput_functor
 
 static int cunn_Sigmoid_updateOutput(lua_State *L)
 {
+  //double ts = get_ts();
   THCState *state = getCutorchState(L);
   THCudaTensor *input = (THCudaTensor*)luaT_checkudata(L, 2, "torch.CudaTensor");
   THCudaTensor *output = (THCudaTensor*)luaT_getfieldcheckudata(L, 1, "output", "torch.CudaTensor");
   THAssert(THCudaTensor_checkGPU(state, 2, input, output));
   THCudaTensor_resizeAs(state, output, input);
+  //double pre_tensor = get_ts() - ts;
+  double ts = get_ts();
   THCudaTensor_pointwiseApply2(state, output, input, sigmoidupdateOutput_functor());
+  //double tensor = get_ts() - ts;
+  //double post_tensor = 0.0;
+  double pointwiseApply2_sigmoid = get_ts() - ts;
+  //std::cout<<"Sigmoid__pre_tensor|"<<pre_tensor<<std::endl;
+  //std::cout<<"Sigmoid__tensor|"<<tensor<<std::endl;
+  //std::cout<<"Sigmoid__post_tensor|"<<post_tensor<<std::endl;
+  std::cout<<std::fixed<<"pointwiseApply2_sigmoid,"<<pointwiseApply2_sigmoid<<std::endl;
   return 1;
 }
 

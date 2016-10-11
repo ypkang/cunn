@@ -7,6 +7,8 @@ extern "C"
 }
 #include <luaT.h>
 #include <THC/THC.h>
+#include <chrono>
+#include <iostream>
 
 THCState* getCutorchState(lua_State* L);
 
@@ -42,5 +44,7 @@ void cunn_VolumetricMaxPooling_init(lua_State *L);
 void cunn_VolumetricAveragePooling_init(lua_State *L);
 void cunn_PReLU_init(lua_State *L);
 void cunn_RReLU_init(lua_State *L);
+
+double get_ts();
 
 #endif
